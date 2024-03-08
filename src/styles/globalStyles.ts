@@ -27,5 +27,11 @@ export const globalStyles = StyleSheet.create({
     },
     section: {
         marginBottom: 16,
+    },
+    tag: {
+        paddingHorizontal: 20,
+        paddingVertical: Platform.OS === 'ios' ? 6 : 4,
+        backgroundColor: colors.blue,
+        borderRadius: 100,
     }
 })

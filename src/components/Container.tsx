@@ -1,5 +1,6 @@
 import { View, Text, ScrollView } from 'react-native'
 import React, { ReactNode } from 'react'
+import { globalStyles } from '../styles/globalStyles';
 
 interface Props {
     title?: string;
@@ -12,7 +13,7 @@ const Container = (props: Props) => {
     const { title, back, right, children } = props;
 
     return (
-        <ScrollView>
+        <ScrollView style={[globalStyles.container]}>
             {children}
         </ScrollView>
     )

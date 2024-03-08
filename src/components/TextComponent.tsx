@@ -1,5 +1,5 @@
 import React from 'react';
-import { Text } from 'react-native';
+import { StyleProp, Text, TextStyle } from 'react-native';
 import { colors } from '../constants/colors';
 import { fontFamilies } from '../constants/fontFamilies';
 import { globalStyles } from '../styles/globalStyles';
@@ -10,10 +10,11 @@ interface Props {
     font?: string;
     color?: string;
     flex?: number;
+    styles?: StyleProp<TextStyle>; 
 }
 
 const TextComponent = (props: Props) => {
-    const { text, font, size, color, flex } = props
+    const { text, font, size, color, flex, styles } = props
 
     return (
         <Text
@@ -24,7 +25,8 @@ const TextComponent = (props: Props) => {
                     fontFamily: font ?? fontFamilies.regular,
                     fontSize: size ?? 14,
                     color: color ?? colors.desc,
-                }
+                },
+                styles,
             ]}>
             {text}
         </Text>
