@@ -33,5 +33,17 @@ export const globalStyles = StyleSheet.create({
         paddingVertical: Platform.OS === 'ios' ? 6 : 4,
         backgroundColor: colors.blue,
         borderRadius: 100,
-    }
+    },
+    card: {
+        borderRadius: 12,
+    },
+    iconContainer: {
+        width: 40,
+        height: 40,
+        borderRadius: 100,
+        backgroundColor: 'rgba(0, 0, 0, 0.2 )',
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginBottom: 16,
+    },
 })
