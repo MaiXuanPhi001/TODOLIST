@@ -8,14 +8,16 @@ interface Props {
     color?: string;
     value: number;
     maxValue?: number;
+    radius?: number;
 }
 
 const CicularComponent = (props: Props) => {
-    const { color, value, maxValue } = props
+    const { color, value, maxValue, radius } = props
 
     return <CircularProgress
         value={value}
         title={`${value}%`}
+        radius={radius ?? 46}
         showProgressValue={false}
         activeStrokeColor={color ?? colors.blue}
         inActiveStrokeColor={'#3C444A'}
