@@ -1,43 +1,63 @@
-import { View, Text, TouchableOpacity, ScrollView, TouchableHighlight } from 'react-native'
-import React from 'react'
-import Container from '../components/Container'
-import SectionComponent from '../components/SectionComponent'
-import RowComponent from '../components/RowComponent'
-import TextComponent from '../components/TextComponent'
-import { globalStyles } from '../styles/globalStyles'
-import CardComponent from '../components/CardComponent'
-import TitleComponent from '../components/TitleComponent'
-import { Add, Edit2, Element4, Notification, SearchNormal1 } from 'iconsax-react-native'
-import { colors } from '../constants/colors'
-import IonIcons from 'react-native-vector-icons/Ionicons'
-import TagComponent from '../components/TagComponent'
-import SpaceComponent from '../components/SpaceComponent'
-import CicularComponent from '../components/CicularComponent'
-import CardImageComponent from '../components/CardImageComponent'
-import AvatarGroup from '../components/AvatarGroup'
-import ProgressBarComponent from '../components/ProgressBarComponent'
-import { fontFamilies } from '../constants/fontFamilies'
+import {
+    Add,
+    Edit2,
+    Element4,
+    Logout,
+    Notification,
+    SearchNormal1,
+} from 'iconsax-react-native';
+import React from 'react';
+import { TouchableOpacity, View } from 'react-native';
+import AvatarGroup from '../../components/AvatarGroup';
+import CardComponent from '../../components/CardComponent';
+import CardImageConponent from '../../components/CardImageConponent';
+import CicularComponent from '../../components/CicularComponent';
+import Container from '../../components/Container';
+import ProgressBarComponent from '../../components/ProgressBarComponent';
+import RowComponent from '../../components/RowComponent';
+import SectionComponent from '../../components/SectionComponent';
+import SpaceComponent from '../../components/SpaceComponent';
+import TagComponent from '../../components/TagComponent';
+import TextComponent from '../../components/TextComponent';
+import TitleComponent from '../../components/TitleComponent';
+import { colors } from '../../constants/colors';
+import { fontFamilies } from '../../constants/fontFamilies';
+import { globalStyles } from '../../styles/globalStyles';
+// import auth from '@react-native-firebase/auth';
 
-const HomeScreen = () => {
+const HomeScreen = ({ navigation }: any) => {
+    const handleSingout = async () => {
+        // await auth().signOut();
+    };
+
     return (
         <View style={{ flex: 1 }}>
-            <Container>
+            <Container isScroll>
                 <SectionComponent>
-                    <RowComponent justify='space-between'>
+                    <RowComponent justify="space-between">
                         <Element4 size={24} color={colors.desc} />
                         <Notification size={24} color={colors.desc} />
                     </RowComponent>
                 </SectionComponent>
                 <SectionComponent>
-                    <TextComponent text='Hi, Jason' />
-                    <TextComponent text='Be Productive today' />
+                    <RowComponent>
+                        <View
+                            style={{
+                                flex: 1,
+                            }}>
+                            <TextComponent text="Hi, Jason" />
+                            <TitleComponent text="Be Productive today" />
+                        </View>
+                        <TouchableOpacity onPress={handleSingout}>
+                            <Logout size={22} color="coral" />
+                        </TouchableOpacity>
+                    </RowComponent>
                 </SectionComponent>
                 <SectionComponent>
                     <RowComponent
                         styles={[globalStyles.inputContainer]}
-                        onPress={() => console.log('say hi')}
-                    >
-                        <TextComponent color={'#696B6F'} text='Search task' />
+                        onPress={() => navigation.navigate('SearchScreen')}>
+                        <TextComponent color="#696B6F" text="Search task" />
                         <SearchNormal1 size={20} color={colors.desc} />
                     </RowComponent>
                 </SectionComponent>
@@ -45,13 +65,13 @@ const HomeScreen = () => {
                     <CardComponent>
                         <RowComponent>
                             <View style={{ flex: 1 }}>
-                                <TitleComponent text='Task progress' />
-                                <TextComponent text='30/40 task done' />
+                                <TitleComponent text="Task progress" />
+                                <TextComponent text="30/40 tasks done" />
                                 <SpaceComponent height={12} />
-                                <RowComponent justify='flex-start'>
+                                <RowComponent justify="flex-start">
                                     <TagComponent
-                                        text='Match 22'
-                                        onPress={() => console.log('Say hii')}
+                                        text="Match 22"
+                                        onPress={() => console.log('Say Hi!!!')}
                                     />
                                 </RowComponent>
                             </View>
@@ -64,52 +84,53 @@ const HomeScreen = () => {
                 <SectionComponent>
                     <RowComponent styles={{ alignItems: 'flex-start' }}>
                         <View style={{ flex: 1 }}>
-                            <CardImageComponent>
+                            <CardImageConponent>
                                 <TouchableOpacity
                                     onPress={() => { }}
                                     style={globalStyles.iconContainer}>
                                     <Edit2 size={20} color={colors.white} />
                                 </TouchableOpacity>
-                                <TitleComponent text={'UX Design'} />
-                                <TextComponent text={'Task managements mobile app'} size={13} />
+                                <TitleComponent text="UX Design" />
+                                <TextComponent text="Task management mobile app" size={13} />
 
                                 <View style={{ marginVertical: 28 }}>
                                     <AvatarGroup />
                                     <ProgressBarComponent
-                                        percent={'70%'}
-                                        color={'#0AACFF'}
-                                        size={'large'}
+                                        percent="70%"
+                                        color="#0AACFF"
+                                        size="large"
                                     />
                                 </View>
                                 <TextComponent
-                                    text='Due, 2023 Match 03'
+                                    text="Due, 2023 Match 03"
                                     size={12}
                                     color={colors.desc}
                                 />
-                            </CardImageComponent>
+                            </CardImageConponent>
                         </View>
                         <SpaceComponent width={16} />
                         <View style={{ flex: 1 }}>
-                            <CardImageComponent color='rgba(33, 150, 243, 0.93)'>
+                            <CardImageConponent color="rgba(33, 150, 243, 0.9)">
                                 <TouchableOpacity
                                     onPress={() => { }}
                                     style={globalStyles.iconContainer}>
                                     <Edit2 size={20} color={colors.white} />
                                 </TouchableOpacity>
-                                <TitleComponent text={'API Payment'} size={18} />
+                                <TitleComponent text="API Payment" size={18} />
                                 <AvatarGroup />
-                                <ProgressBarComponent percent={'70%'} color={'#A2F068'} />
-                            </CardImageComponent>
+                                <ProgressBarComponent percent="40%" color="#A2F068" />
+                            </CardImageConponent>
+
                             <SpaceComponent height={16} />
-                            <CardImageComponent color='rgba(18, 181, 22, 0.9)'>
+                            <CardImageConponent color="rgba(18, 181, 22, 0.9)">
                                 <TouchableOpacity
                                     onPress={() => { }}
                                     style={globalStyles.iconContainer}>
                                     <Edit2 size={20} color={colors.white} />
                                 </TouchableOpacity>
-                                <TitleComponent text={'Update work'} />
-                                <TextComponent text={'Revision home page'} size={13} />
-                            </CardImageComponent>
+                                <TitleComponent text="Update work" />
+                                <TextComponent text="Revision home page" size={13} />
+                            </CardImageConponent>
                         </View>
                     </RowComponent>
                 </SectionComponent>
@@ -118,13 +139,14 @@ const HomeScreen = () => {
                         flex={1}
                         font={fontFamilies.bold}
                         size={21}
-                        text='Urgents tasks'
+                        text="Urgents tasks"
                     />
                     <CardComponent>
                         <RowComponent>
                             <CicularComponent value={40} radius={36} />
-                            <View style={{ flex: 1, justifyContent: 'center', paddingLeft: 12 }}>
-                                <TextComponent text={'Title of task'} />
+                            <View
+                                style={{ flex: 1, justifyContent: 'center', paddingLeft: 12 }}>
+                                <TextComponent text="Title of task" />
                             </View>
                         </RowComponent>
                     </CardComponent>
@@ -140,23 +162,25 @@ const HomeScreen = () => {
                     justifyContent: 'center',
                     alignItems: 'center',
                 }}>
-                <TouchableHighlight
+                <TouchableOpacity
                     activeOpacity={1}
+                    onPress={() => navigation.navigate('AddNewTask')}
                     style={[
                         globalStyles.row,
                         {
-                            backgroundColor: 'coral',
+                            backgroundColor: colors.blue,
                             padding: 10,
-                            borderRadius: 100,
+                            borderRadius: 12,
+                            paddingVertical: 14,
                             width: '80%',
-                        }
+                        },
                     ]}>
-                    <TextComponent text='Add new task' flex={0} />
+                    <TextComponent text="Add new tasks" flex={0} />
                     <Add size={22} color={colors.white} />
-                </TouchableHighlight>
+                </TouchableOpacity>
             </View>
         </View>
-    )
-}
+    );
+};
 
-export default HomeScreen
+export default HomeScreen;
