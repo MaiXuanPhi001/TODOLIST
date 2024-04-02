@@ -23,11 +23,11 @@ import TitleComponent from '../../components/TitleComponent';
 import { colors } from '../../constants/colors';
 import { fontFamilies } from '../../constants/fontFamilies';
 import { globalStyles } from '../../styles/globalStyles';
-// import auth from '@react-native-firebase/auth';
+import auth from '@react-native-firebase/auth';
 
 const HomeScreen = ({ navigation }: any) => {
     const handleSingout = async () => {
-        // await auth().signOut();
+        await auth().signOut();
     };
 
     return (

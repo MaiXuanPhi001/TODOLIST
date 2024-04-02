@@ -67,7 +67,7 @@ const InputComponent = (props: Props) => {
           <TextInput
             style={[
               globalStyles.text,
-              {margin: 0, padding: 0, paddingVertical: 6, flex: 1},
+              {margin: 0, padding: 0, paddingVertical: 0, flex: 1},
             ]}
             placeholder={placeholder ?? ''}
             placeholderTextColor={'#676767'}
