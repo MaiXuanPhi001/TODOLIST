@@ -1,13 +1,13 @@
-import { View, Text, TouchableOpacity, StyleProp, ViewStyle } from 'react-native'
-import React, { ReactNode } from 'react'
+import { View, Text, TouchableOpacity, StyleProp, ViewStyle } from 'react-native';
+import React, { ReactNode } from 'react';
 import { globalStyles } from '../styles/globalStyles';
 
 interface Props {
     children: ReactNode;
     justify?:
+    | 'center'
     | 'flex-start'
     | 'flex-end'
-    | 'center'
     | 'space-between'
     | 'space-around'
     | 'space-evenly'
@@ -17,27 +17,25 @@ interface Props {
 }
 
 const RowComponent = (props: Props) => {
-    const { children, justify, onPress, styles } = props
+    const { children, justify, onPress, styles } = props;
 
     const localStyle = [
         globalStyles.row,
         {
-            justifyContent: justify ?? 'center'
+            justifyContent: justify ?? 'center',
         },
         styles,
-    ]
+    ];
+
     return onPress ? (
         <TouchableOpacity
             style={localStyle}
-            onPress={onPress ? () => onPress() : undefined}
-        >
+            onPress={onPress ? () => onPress() : undefined}>
             {children}
         </TouchableOpacity>
     ) : (
-        <View style={localStyle}>
-            {children}
-        </View>
-    )
-}
+        <View style={localStyle}>{children}</View>
+    );
+};
 
-export default RowComponent
+export default RowComponent;

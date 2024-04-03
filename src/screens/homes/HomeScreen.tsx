@@ -26,9 +26,7 @@ import { globalStyles } from '../../styles/globalStyles';
 import auth from '@react-native-firebase/auth';
 
 const HomeScreen = ({ navigation }: any) => {
-    const handleSingout = async () => {
-        await auth().signOut();
-    };
+    const user = auth().currentUser;
 
     return (
         <View style={{ flex: 1 }}>
@@ -41,14 +39,11 @@ const HomeScreen = ({ navigation }: any) => {
                 </SectionComponent>
                 <SectionComponent>
                     <RowComponent>
-                        <View
-                            style={{
-                                flex: 1,
-                            }}>
-                            <TextComponent text="Hi, Jason" />
+                        <View style={{ flex: 1 }}>
+                            <TextComponent text={`hi, ${user?.email}`} />
                             <TitleComponent text="Be Productive today" />
                         </View>
-                        <TouchableOpacity onPress={handleSingout}>
+                        <TouchableOpacity onPress={async () => auth().signOut()}>
                             <Logout size={22} color="coral" />
                         </TouchableOpacity>
                     </RowComponent>

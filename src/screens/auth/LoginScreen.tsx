@@ -56,7 +56,6 @@ const LoginScreen = ({ navigation }: any) => {
                     placeholder="Email"
                     prefix={<Sms size={22} color={colors.gray2} />}
                     allowClear
-                    type="email-address"
                 />
                 <InputComponent
                     title="Password"

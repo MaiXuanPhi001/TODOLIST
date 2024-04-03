@@ -1,16 +1,11 @@
-import React, {ReactNode, useState} from 'react';
-import {
-  KeyboardTypeOptions,
-  TextInput,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import React, { ReactNode, useState } from 'react';
+import { TextInput, TouchableOpacity, View } from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
-import {colors} from '../constants/colors';
-import {globalStyles} from '../styles/globalStyles';
+import { colors } from '../constants/colors';
+import { globalStyles } from '../styles/globalStyles';
 import RowComponent from './RowComponent';
 import TitleComponent from './TitleComponent';
-import {Eye, EyeSlash} from 'iconsax-react-native';
+import { Eye, EyeSlash } from 'iconsax-react-native';
 
 interface Props {
   value: string;
@@ -22,7 +17,6 @@ interface Props {
   allowClear?: boolean;
   multible?: boolean;
   numberOfLine?: number;
-  type?: KeyboardTypeOptions;
   isPassword?: boolean;
 }
 
@@ -37,14 +31,13 @@ const InputComponent = (props: Props) => {
     allowClear,
     multible,
     numberOfLine,
-    type,
     isPassword,
   } = props;
 
   const [showPass, setShowPass] = useState(false);
 
   return (
-    <View style={{marginBottom: 16}}>
+    <View style={{ marginBottom: 16 }}>
       {title && <TitleComponent text={title} />}
       <RowComponent
         styles={[
@@ -67,7 +60,7 @@ const InputComponent = (props: Props) => {
           <TextInput
             style={[
               globalStyles.text,
-              {margin: 0, padding: 0, paddingVertical: 0, flex: 1},
+              { margin: 0, padding: 0, paddingVertical: 0, flex: 1 },
             ]}
             placeholder={placeholder ?? ''}
             placeholderTextColor={'#676767'}
@@ -75,7 +68,6 @@ const InputComponent = (props: Props) => {
             onChangeText={val => onChange(val)}
             multiline={multible}
             numberOfLines={numberOfLine}
-            keyboardType={type}
             secureTextEntry={isPassword ? !showPass : false}
             autoCapitalize="none"
           />
