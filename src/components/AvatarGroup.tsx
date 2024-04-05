@@ -1,34 +1,69 @@
-import { View, Text, Image } from 'react-native'
-import React from 'react'
-import RowComponent from './RowComponent'
-import TextComponent from './TextComponent'
-import { colors } from '../constants/colors'
-import { fontFamilies } from '../constants/fontFamilies'
+import React, { useEffect, useState } from 'react';
+import { Image, Text, View } from 'react-native';
+import { colors } from '../constants/colors';
+import { fontFamilies } from '../constants/fontFamilies';
+import RowComponent from './RowComponent';
+import TextComponent from './TextComponent';
+import firestore from '@react-native-firebase/firestore';
+import { globalStyles } from '../styles/globalStyles';
+import AvatarComponent from './AvatarComponent';
 
-const AvatarGroup = () => {
-    const uidsLength = 10
-    const imageUrl = `https://gamek.mediacdn.vn/133514250583805952/2022/5/18/photo-1-16528608926331302726659.jpg`;
+interface Props {
+    uids: string[];
+}
+
+const AvatarGroup = (props: Props) => {
+    const { uids } = props;
+
+    const [usersName, setUsersName] = useState<
+        {
+            name: string;
+            imgUrl: string;
+        }[]
+    >([]);
+
+    // useEffect(() => {
+    //     getUserAvata();
+    // }, [uids]);
+
+    const getUserAvata = async () => {
+        const items: any = [...usersName];
+        uids.forEach(async id => {
+            await firestore()
+                .doc(`users/${id}`)
+                .get()
+                .then((snap: any) => {
+                    if (snap.exists) {
+                        items.push({
+                            name: snap.data().displayName,
+                            imgUrl: snap.data().imgUrl ?? '',
+                        });
+                    }
+                })
+                .catch(error => {
+                    console.log(error);
+                });
+        });
+        setUsersName(items);
+    };
+
     const imageStyle = {
         width: 32,
         height: 32,
         borderRadius: 100,
         borderWidth: 2,
         borderColor: colors.white,
-    }
+    };
     return (
         <RowComponent styles={{ justifyContent: 'flex-start' }}>
-            {Array.from({ length: 10 }).map(
+            {uids.map(
                 (item, index) =>
-                    index < 3 && (
-                        <Image
-                            key={`image${index}`}
-                            source={{ uri: imageUrl }}
-                            style={[imageStyle, { marginLeft: index > 0 ? - 10 : 0, }]}
-                        />
-                    )
+                    index < 3 && <AvatarComponent uid={item} index={index} key={item} />,
             )}
-            {uidsLength > 5 && (
+
+            {/* {uids.length > 3 && (
                 <View
+                    key={'total'}
                     style={[
                         imageStyle,
                         {
@@ -37,21 +72,20 @@ const AvatarGroup = () => {
                             alignItems: 'center',
                             borderWidth: 1,
                             marginLeft: -10,
-                        }
+                        },
                     ]}>
                     <TextComponent
                         flex={0}
                         styles={{
                             lineHeight: 19,
                         }}
-                        size={12}
                         font={fontFamilies.semiBold}
-                        text={`+${uidsLength - 3 > 9 ? 9 : uidsLength - 3}`}
+                        text={`+${uids.length - 3 > 9 ? 9 : uids.length - 3}`}
                     />
                 </View>
-            )}
+            )} */}
         </RowComponent>
-    )
-}
+    );
+};
 
-export default AvatarGroup
+export default AvatarGroup;
