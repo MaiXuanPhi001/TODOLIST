@@ -1,4 +1,4 @@
-import { Platform, StyleSheet } from 'react-native';
+import { Dimensions, Platform, StyleSheet } from 'react-native';
 import { colors } from '../constants/colors';
 import { fontFamilies } from '../constants/fontFamilies';
 
@@ -6,7 +6,6 @@ export const globalStyles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: colors.bgColor,
-        paddingTop: 20,
     },
 
     row: {
@@ -21,11 +20,15 @@ export const globalStyles = StyleSheet.create({
         color: colors.text,
     },
 
+    documentImg: {
+        marginHorizontal: 4,
+    },
+
     inputContainer: {
         backgroundColor: colors.gray,
         borderRadius: 12,
         paddingHorizontal: Platform.OS === 'ios' ? 12 : 10,
-        paddingVertical: 12,
+        paddingVertical: 16,
     },
 
     section: {
@@ -52,5 +55,24 @@ export const globalStyles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         marginBottom: 16,
+    },
+
+    modal: {
+        flex: 1,
+    },
+
+    modalContainer: {
+        padding: 20,
+        flex: 1,
+        backgroundColor: 'rgba(0,0,0,0.7)',
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+
+    modalContent: {
+        width: Dimensions.get('window').width * 0.8,
+        padding: 20,
+        borderRadius: 12,
+        backgroundColor: colors.white,
     },
 });

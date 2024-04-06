@@ -1,3 +1,6 @@
+import auth from '@react-native-firebase/auth';
+import firestore from '@react-native-firebase/firestore';
+import { useIsFocused, useLinkTo } from '@react-navigation/native';
 import {
     Add,
     Edit2,
@@ -7,7 +10,7 @@ import {
     SearchNormal1,
 } from 'iconsax-react-native';
 import React, { useEffect, useState } from 'react';
-import { ActivityIndicator, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, Linking, TouchableOpacity, View } from 'react-native';
 import AvatarGroup from '../../components/AvatarGroup';
 import CardComponent from '../../components/CardComponent';
 import CardImageConponent from '../../components/CardImageConponent';
@@ -20,30 +23,64 @@ import SpaceComponent from '../../components/SpaceComponent';
 import TagComponent from '../../components/TagComponent';
 import TextComponent from '../../components/TextComponent';
 import TitleComponent from '../../components/TitleComponent';
+import { monthNames } from '../../constants/appInfos';
 import { colors } from '../../constants/colors';
 import { fontFamilies } from '../../constants/fontFamilies';
-import { globalStyles } from '../../styles/globalStyles';
-import auth from '@react-native-firebase/auth';
-import firestore from '@react-native-firebase/firestore';
 import { TaskModel } from '../../models/TaskModel';
+import { globalStyles } from '../../styles/globalStyles';
+import { add0ToNumber } from '../../utils/add0ToNumber';
+import { HandleDateTime } from '../../utils/handeDateTime';
+import { HandleNotification } from '../../utils/handleNotification';
+import { NotificationModel } from '../../models/NotificationModel';
+// import messaging from '@react-native-firebase/messaging';
+
+const date = new Date();
 
 const HomeScreen = ({ navigation }: any) => {
     const user = auth().currentUser;
 
+    const linkTo = useLinkTo();
+
     const [isLoading, setIsLoading] = useState(false);
     const [tasks, setTasks] = useState<TaskModel[]>([]);
+    const [urgentTask, setUrgentTask] = useState<TaskModel[]>([]);
+    const [unReadNotifications, setUnReadNotifications] = useState<
+        NotificationModel[]
+    >([]);
+
+    const isFocused = useIsFocused();
+
+    // useEffect(() => {
+    //     getTasks();
+    //     HandleNotification.checkNotificationPersion();
+    //     messaging().onMessage(mess => {
+    //         handleGetUnReadNotifications();
+    //     });
+
+    //     messaging()
+    //         .getInitialNotification()
+    //         .then((mess: any) => {
+    //             const data = mess.data;
+    //             const taskid = data.taskId;
+
+    //             linkTo(`/task-detail/${taskid}`);
+    //         });
+    // }, []);
 
     useEffect(() => {
-        getNewTasks()
-    }, [])
+        if (tasks.length > 0) {
+            const items = tasks.filter(element => element.isUrgent);
 
-    const getNewTasks = async () => {
+            setUrgentTask(items);
+        }
+    }, [tasks]);
+
+    const getTasks = () => {
         setIsLoading(true);
 
         firestore()
             .collection('tasks')
-            .orderBy('dueDate')
-            .limitToLast(3)
+            .where('uids', 'array-contains', user?.uid)
             .onSnapshot(snap => {
                 if (snap.empty) {
                     console.log(`tasks not found!`);
@@ -62,6 +99,34 @@ const HomeScreen = ({ navigation }: any) => {
             });
     };
 
+    const handleMoveToTaskDetail = (id?: string, color?: string) =>
+        navigation.navigate('TaskDetail', {
+            id,
+            color,
+        });
+
+    const handleGetUnReadNotifications = () => {
+        firestore()
+            .collection('notifications')
+            .where('uid', '==', user?.uid)
+            .where('isRead', '==', false)
+            .onSnapshot(snap => {
+                if (!snap.empty) {
+                    const items: NotificationModel[] = [];
+                    snap.forEach((item: any) => {
+                        items.push({
+                            id: item.id,
+                            ...item.data(),
+                        });
+                    });
+
+                    setUnReadNotifications(items);
+                } else {
+                    setUnReadNotifications([]);
+                }
+            });
+    };
+
     return (
         <View style={{ flex: 1 }}>
             <Container isScroll>
@@ -71,7 +136,7 @@ const HomeScreen = ({ navigation }: any) => {
                         <TouchableOpacity
                             onPress={() => navigation.navigate('Notifications')}>
                             <Notification size={24} color={colors.desc} />
-                            {/* {unReadNotifications.length > 0 && (
+                            {unReadNotifications.length > 0 && (
                                 <View
                                     style={{
                                         backgroundColor: 'red',
@@ -87,7 +152,7 @@ const HomeScreen = ({ navigation }: any) => {
                                         alignItems: 'center',
                                     }}
                                 />
-                            )} */}
+                            )}
                         </TouchableOpacity>
                     </RowComponent>
                 </SectionComponent>
@@ -131,13 +196,13 @@ const HomeScreen = ({ navigation }: any) => {
                                         } /${tasks.length}`}
                                 />
                                 <SpaceComponent height={12} />
-                                {/* <RowComponent justify="flex-start">
+                                <RowComponent justify="flex-start">
                                     <TagComponent
                                         text={`${monthNames[date.getMonth()]} ${add0ToNumber(
                                             date.getDate(),
                                         )}`}
                                     />
-                                </RowComponent> */}
+                                </RowComponent>
                             </View>
                             <View>
                                 {tasks.length > 0 && (
@@ -175,10 +240,9 @@ const HomeScreen = ({ navigation }: any) => {
                             <View style={{ flex: 1 }}>
                                 {tasks[0] && (
                                     <CardImageConponent
-                                    // onPress={() =>
-                                    //     handleMoveToTaskDetail(tasks[0].id as string)
-                                    // }
-                                    >
+                                        onPress={() =>
+                                            handleMoveToTaskDetail(tasks[0].id as string)
+                                        }>
                                         <TouchableOpacity
                                             onPress={() =>
                                                 navigation.navigate('AddNewTask', {
@@ -208,7 +272,7 @@ const HomeScreen = ({ navigation }: any) => {
                                                 />
                                             ) : null}
                                         </View>
-                                        {/* {tasks[0].dueDate && (
+                                        {tasks[0].dueDate && (
                                             <TextComponent
                                                 text={`Due ${HandleDateTime.DateString(
                                                     tasks[0].dueDate.toDate(),
@@ -216,7 +280,7 @@ const HomeScreen = ({ navigation }: any) => {
                                                 size={12}
                                                 color={colors.desc}
                                             />
-                                        )} */}
+                                        )}
                                     </CardImageConponent>
                                 )}
                             </View>
@@ -225,12 +289,12 @@ const HomeScreen = ({ navigation }: any) => {
                             <View style={{ flex: 1 }}>
                                 {tasks[1] && (
                                     <CardImageConponent
-                                        // onPress={() =>
-                                        //     handleMoveToTaskDetail(
-                                        //         tasks[1].id as string,
-                                        //         'rgba(33, 150, 243, 0.9)',
-                                        //     )
-                                        // }
+                                        onPress={() =>
+                                            handleMoveToTaskDetail(
+                                                tasks[1].id as string,
+                                                'rgba(33, 150, 243, 0.9)',
+                                            )
+                                        }
                                         color="rgba(33, 150, 243, 0.9)">
                                         <TouchableOpacity
                                             onPress={() =>
@@ -258,12 +322,12 @@ const HomeScreen = ({ navigation }: any) => {
                                 <SpaceComponent height={16} />
                                 {tasks[2] && (
                                     <CardImageConponent
-                                        // onPress={() =>
-                                        //     handleMoveToTaskDetail(
-                                        //         tasks[2].id as string,
-                                        //         'rgba(18, 181, 22, 0.9)',
-                                        //     )
-                                        // }
+                                        onPress={() =>
+                                            handleMoveToTaskDetail(
+                                                tasks[2].id as string,
+                                                'rgba(18, 181, 22, 0.9)',
+                                            )
+                                        }
                                         color="rgba(18, 181, 22, 0.9)">
                                         <TouchableOpacity
                                             onPress={() =>
@@ -297,7 +361,7 @@ const HomeScreen = ({ navigation }: any) => {
                         size={21}
                         text="Urgents tasks"
                     />
-                    {/* {urgentTask.length > 0 &&
+                    {urgentTask.length > 0 &&
                         urgentTask.map(item => (
                             <CardComponent
                                 onPress={() => handleMoveToTaskDetail(item.id)}
@@ -318,7 +382,7 @@ const HomeScreen = ({ navigation }: any) => {
                                     </View>
                                 </RowComponent>
                             </CardComponent>
-                        ))} */}
+                        ))}
                 </SectionComponent>
             </Container>
             <View

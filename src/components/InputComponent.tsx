@@ -1,5 +1,5 @@
 import React, { ReactNode, useState } from 'react';
-import { TextInput, TouchableOpacity, View } from 'react-native';
+import { Platform, TextInput, TouchableOpacity, View } from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import { colors } from '../constants/colors';
 import { globalStyles } from '../styles/globalStyles';
@@ -18,6 +18,7 @@ interface Props {
   multible?: boolean;
   numberOfLine?: number;
   isPassword?: boolean;
+  color?: string;
 }
 
 const InputComponent = (props: Props) => {
@@ -32,6 +33,7 @@ const InputComponent = (props: Props) => {
     multible,
     numberOfLine,
     isPassword,
+    color,
   } = props;
 
   const [showPass, setShowPass] = useState(false);
@@ -45,9 +47,10 @@ const InputComponent = (props: Props) => {
           {
             marginTop: title ? 8 : 0,
             minHeight: multible && numberOfLine ? 32 * numberOfLine : 32,
-            paddingVertical: 14,
+            paddingVertical: Platform.OS === 'ios' ? 16 : 12,
             paddingHorizontal: 10,
-            alignItems: 'flex-start',
+            alignItems: multible ? 'flex-start' : 'center',
+            backgroundColor: color ?? colors.gray,
           },
         ]}>
         {prefix && prefix}
@@ -58,11 +61,8 @@ const InputComponent = (props: Props) => {
             paddingRight: affix ? 8 : 0,
           }}>
           <TextInput
-            style={[
-              globalStyles.text,
-              { margin: 0, padding: 0, paddingVertical: 0, flex: 1 },
-            ]}
-            placeholder={placeholder ?? ''}
+            style={[globalStyles.text, { margin: 0, padding: 0 }]}
+            placeholder={placeholder ?? title ?? ''}
             placeholderTextColor={'#676767'}
             value={value}
             onChangeText={val => onChange(val)}
