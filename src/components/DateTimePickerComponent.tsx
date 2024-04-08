@@ -1,36 +1,37 @@
-import {View, Text, Modal, Button, Dimensions} from 'react-native';
-import React, {useState} from 'react';
+import { View, Text, Modal, Button, Dimensions } from 'react-native';
+import React, { useState } from 'react';
 import TitleComponent from './TitleComponent';
 import RowComponent from './RowComponent';
 import TextComponent from './TextComponent';
-import {colors} from '../constants/colors';
-import {ArrowDown2} from 'iconsax-react-native';
-import {globalStyles} from '../styles/globalStyles';
+import { colors } from '../constants/colors';
+import { ArrowDown2 } from 'iconsax-react-native';
+import { globalStyles } from '../styles/globalStyles';
 import SpaceComponent from './SpaceComponent';
 import DatePicker from 'react-native-date-picker';
+import { Timestamp } from 'react-native-reanimated/lib/typescript/reanimated2/commonTypes';
 
 interface Props {
   type?: 'date' | 'time' | 'datetime';
   title?: string;
   placeholder?: string;
-  selected?: Date;
+  selected?: any;
   onSelect: (val: Date) => void;
 }
 
 const DateTimePickerComponent = (props: Props) => {
-  const {selected, onSelect, placeholder, title, type} = props;
+  const { selected, onSelect, placeholder, title, type } = props;
 
   const [isVisibleModalDateTime, setIsVisibleModalDateTime] = useState(false);
   const [date, setDate] = useState(selected ?? new Date());
   return (
     <>
-      <View style={{marginBottom: 16}}>
+      <View style={{ marginBottom: 16 }}>
         {title && <TitleComponent text={title} />}
         <RowComponent
           onPress={() => setIsVisibleModalDateTime(true)}
           styles={[
             globalStyles.inputContainer,
-            {marginTop: title ? 8 : 0, paddingVertical: 16},
+            { marginTop: title ? 8 : 0, paddingVertical: 16 },
           ]}>
           <TextComponent
             flex={1}
@@ -38,12 +39,11 @@ const DateTimePickerComponent = (props: Props) => {
               selected
                 ? type === 'time'
                   ? `${selected.getHours()}:${selected.getMinutes()}`
-                  : `${selected.getDate()}/${
-                      selected.getMonth() + 1
-                    }/${selected.getFullYear()}`
+                  : `${selected.getDate()}/${selected.getMonth() + 1
+                  }/${selected.getFullYear()}`
                 : placeholder
-                ? placeholder
-                : ''
+                  ? placeholder
+                  : ''
             }
             color={selected ? colors.text : '#676767'}
           />

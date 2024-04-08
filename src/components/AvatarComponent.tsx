@@ -16,8 +16,6 @@ const AvatarComponent = (props: Props) => {
 
     const [userDetail, setUserDetail] = useState<UserDetail>();
 
-    console.log('userDetail: ' , userDetail)
-
     useEffect(() => {
         firestore()
             .doc(`users/${uid}`)

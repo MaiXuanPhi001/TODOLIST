@@ -50,22 +50,22 @@ const HomeScreen = ({ navigation }: any) => {
 
     const isFocused = useIsFocused();
 
-    // useEffect(() => {
-    //     getTasks();
-    //     HandleNotification.checkNotificationPersion();
-    //     messaging().onMessage(mess => {
-    //         handleGetUnReadNotifications();
-    //     });
+    useEffect(() => {
+        getTasks();
+        // HandleNotification.checkNotificationPersion();
+        // messaging().onMessage(mess => {
+        //     handleGetUnReadNotifications();
+        // });
 
-    //     messaging()
-    //         .getInitialNotification()
-    //         .then((mess: any) => {
-    //             const data = mess.data;
-    //             const taskid = data.taskId;
+        // messaging()
+        //     .getInitialNotification()
+        //     .then((mess: any) => {
+        //         const data = mess.data;
+        //         const taskid = data.taskId;
 
-    //             linkTo(`/task-detail/${taskid}`);
-    //         });
-    // }, []);
+        //         linkTo(`/task-detail/${taskid}`);
+        //     });
+    }, []);
 
     useEffect(() => {
         if (tasks.length > 0) {
@@ -80,7 +80,8 @@ const HomeScreen = ({ navigation }: any) => {
 
         firestore()
             .collection('tasks')
-            .where('uids', 'array-contains', user?.uid)
+            .orderBy('dueDate')
+            .limitToLast(3)
             .onSnapshot(snap => {
                 if (snap.empty) {
                     console.log(`tasks not found!`);
@@ -99,7 +100,7 @@ const HomeScreen = ({ navigation }: any) => {
             });
     };
 
-    const handleMoveToTaskDetail = (id?: string, color?: string) =>
+    const handleMoveToTaskDetail = (id?: string, color?: string) => 
         navigation.navigate('TaskDetail', {
             id,
             color,

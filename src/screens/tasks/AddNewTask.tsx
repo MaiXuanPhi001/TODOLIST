@@ -1,46 +1,62 @@
+import firestore from '@react-native-firebase/firestore';
 import React, { useEffect, useState } from 'react';
-import { Button, View } from 'react-native';
+import { Alert, Button, View } from 'react-native';
+import ButtonComponent from '../../components/ButtonComponent';
 import Container from '../../components/Container';
 import DateTimePickerComponent from '../../components/DateTimePickerComponent';
+import DropdownPicker from '../../components/DropdownPicker';
 import InputComponent from '../../components/InputComponent';
 import RowComponent from '../../components/RowComponent';
 import SectionComponent from '../../components/SectionComponent';
 import SpaceComponent from '../../components/SpaceComponent';
-import { TaskModel } from '../../models/TaskModel';
-import DropdownPicker from '../../components/DropdownPicker';
-import { SelectModel } from '../../models/SelectModel';
-import firestore from '@react-native-firebase/firestore';
-import ButtonComponent from '../../components/ButtonComponent';
-import TitleComponent from '../../components/TitleComponent';
-import { AttachSquare } from 'iconsax-react-native';
-import { colors } from '../../constants/colors';
-import DocumentPicker, {
-    DocumentPickerOptions,
-    DocumentPickerResponse,
-} from 'react-native-document-picker';
 import TextComponent from '../../components/TextComponent';
-import storage from '@react-native-firebase/storage';
+import UploadFileComponent from '../../components/UploadFileComponent';
+import { fontFamilies } from '../../constants/fontFamilies';
+import { SelectModel } from '../../models/SelectModel';
+import { Attachment, TaskModel } from '../../models/TaskModel';
+import auth from '@react-native-firebase/auth';
+import { posts } from '../../data/posts';
+import { HandleNotification } from '../../utils/handleNotification';
 
 const initValue: TaskModel = {
     title: '',
     desctiption: '',
-    dueDate: new Date(),
-    start: new Date(),
-    end: new Date(),
+    dueDate: undefined,
+    start: undefined,
+    end: undefined,
     uids: [],
-    fileUrls: [],
+    attachments: [],
+    createdAt: Date.now(),
+    updatedAt: Date.now(),
+    isUrgent: false,
 };
 
-const AddNewTask = ({ navigation }: any) => {
+const AddNewTask = ({ navigation, route }: any) => {
+    const { editable, task }: { editable: boolean; task?: TaskModel } = route.params;
+
     const [taskDetail, setTaskDetail] = useState<TaskModel>(initValue);
     const [usersSelect, setUsersSelect] = useState<SelectModel[]>([]);
-    const [attachments, setAttachments] = useState<DocumentPickerResponse[]>([]);
-    const [attachmentsUrl, setAttachmentsUrl] = useState<string[]>([]);
-    const [isLoading, setIsLoading] = useState(false);
+    const [attachments, setAttachments] = useState<Attachment[]>([]);
+
+    const user = auth().currentUser;
 
     useEffect(() => {
         handleGetAllUsers();
     }, []);
+
+    useEffect(() => {
+        user && setTaskDetail({ ...taskDetail, uids: [user.uid] });
+    }, [user]);
+
+    useEffect(() => {
+        task &&
+            setTaskDetail({
+                ...taskDetail,
+                title: task.title,
+                desctiption: task.desctiption,
+                uids: task.uids,
+            });
+    }, [task]);
 
     const handleGetAllUsers = async () => {
         await firestore()
@@ -54,7 +70,7 @@ const AddNewTask = ({ navigation }: any) => {
 
                     snap.forEach(item => {
                         items.push({
-                            label: item.data().name,
+                            label: item.data().displayName,
                             value: item.id,
                         });
                     });
@@ -76,52 +92,59 @@ const AddNewTask = ({ navigation }: any) => {
     };
 
     const handleAddNewTask = async () => {
-        const data = {
-            ...taskDetail,
-            fileUrls: attachmentsUrl,
-        };
+        if (user) {
+            const data = {
+                ...taskDetail,
+                attachments,
+                createdAt: task ? task.createdAt : Date.now(),
+                updatedAt: Date.now(),
+            };
 
-        await firestore()
-            .collection('tasks')
-            .add(data)
-            .then(() => {
-                console.log('New task added!!');
-                navigation.goBack();
-            })
-            .catch(error => console.log(error));
-    };
-
-    const handlePickerDocument = () => {
-        DocumentPicker.pick({})
-            .then(res => {
-                setAttachments(res);
-
-                res.forEach(item => handleUploadFileToStorage(item));
-            })
-            .catch(error => {
-                console.log(error);
-            });
-    };
-
-    const handleUploadFileToStorage = async (item: DocumentPickerResponse) => {
-        const filename = item.name ?? `file${Date.now()}`;
-        const path = `documents/${filename}`;
-        const items = [...attachmentsUrl];
-
-        await storage().ref(path).putFile(item.uri);
-
-        await storage()
-            .ref(path)
-            .getDownloadURL()
-            .then(url => {
-                items.push(url);
-                setAttachmentsUrl(items);
-            })
-            .catch(error => console.log(error));
+            if (task) {
+                await firestore()
+                    .doc(`tasks/${task.id}`)
+                    .update(data)
+                    .then(() => {
+                        if (usersSelect.length > 0) {
+                            usersSelect.forEach(member => {
+                                member.value !== user.uid &&
+                                    HandleNotification.SendNotification({
+                                        title: 'Update task',
+                                        body: `Your task updated by ${user?.email}`,
+                                        taskId: task?.id ?? '',
+                                        memberId: member.value,
+                                    });
+                            });
+                        }
+                        navigation.goBack();
+                    });
+            } else {
+                await firestore()
+                    .collection('tasks')
+                    .add(data)
+                    .then(snap => {
+                        if (usersSelect.length > 0) {
+                            usersSelect.forEach(member => {
+                                member.value !== user.uid &&
+                                    HandleNotification.SendNotification({
+                                        title: 'New task',
+                                        body: `You have a new task asign by ${user?.email}`,
+                                        taskId: snap.id,
+                                        memberId: member.value,
+                                    });
+                            });
+                        }
+                        navigation.goBack();
+                    })
+                    .catch(error => console.log(error));
+            }
+        } else {
+            Alert.alert('You not login!!!');
+        }
     };
 
     return (
-        <Container back title="Add new task" isScroll>
+        <Container back title="Add new task">
             <SectionComponent>
                 <InputComponent
                     value={taskDetail.title}
@@ -177,10 +200,21 @@ const AddNewTask = ({ navigation }: any) => {
                 />
 
                 <View>
-                    <RowComponent justify="flex-start" onPress={handlePickerDocument}>
-                        <TitleComponent text="Attachments" flex={0} />
+                    <RowComponent
+                        styles={{
+                            alignItems: 'center',
+                            justifyContent: 'flex-start',
+                        }}>
+                        <TextComponent
+                            text="Attachments"
+                            flex={0}
+                            font={fontFamilies.bold}
+                            size={16}
+                        />
                         <SpaceComponent width={8} />
-                        <AttachSquare size={20} color={colors.white} />
+                        <UploadFileComponent
+                            onUpload={file => file && setAttachments([...attachments, file])}
+                        />
                     </RowComponent>
                     {attachments.length > 0 &&
                         attachments.map((item, index) => (
@@ -193,7 +227,10 @@ const AddNewTask = ({ navigation }: any) => {
                 </View>
             </SectionComponent>
             <SectionComponent>
-                <ButtonComponent text="Save" onPress={handleAddNewTask} />
+                <ButtonComponent
+                    text={task ? 'Update' : 'Save'}
+                    onPress={handleAddNewTask}
+                />
             </SectionComponent>
         </Container>
     );

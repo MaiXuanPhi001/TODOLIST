@@ -1,3 +1,8 @@
+# Đáng chú ý
+Bài 7: tích hợp firebase
+Bài 12: res.on('state_changed') để làm tiến trình % upload file
+
+
 This is a new [**React Native**](https://reactnative.dev) project, bootstrapped using [`@react-native-community/cli`](https://github.com/react-native-community/cli).
 
 # Getting Started

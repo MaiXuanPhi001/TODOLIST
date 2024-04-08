@@ -1,4 +1,4 @@
-import {Slider} from '@miblanchard/react-native-slider';
+import { Slider } from '@miblanchard/react-native-slider';
 import firestore from '@react-native-firebase/firestore';
 import {
   AddSquare,
@@ -8,7 +8,7 @@ import {
   TickCircle,
   TickSquare,
 } from 'iconsax-react-native';
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Alert,
   ScrollView,
@@ -25,17 +25,17 @@ import SpaceComponent from '../../components/SpaceComponent';
 import TextComponent from '../../components/TextComponent';
 import TitleComponent from '../../components/TitleComponent';
 import UploadFileComponent from '../../components/UploadFileComponent';
-import {colors} from '../../constants/colors';
-import {fontFamilies} from '../../constants/fontFamilies';
-import {Attachment, SubTask, TaskModel} from '../../models/TaskModel';
-import {calcFileSize} from '../../utils/calcFileSize';
-import {HandleDateTime} from '../../utils/handeDateTime';
+import { colors } from '../../constants/colors';
+import { fontFamilies } from '../../constants/fontFamilies';
+import { Attachment, SubTask, TaskModel } from '../../models/TaskModel';
+import { calcFileSize } from '../../utils/calcFileSize';
+import { HandleDateTime } from '../../utils/handeDateTime';
 import ModalAddSubTask from '../../modals/ModalAddSubTask';
-import {HandleNotification} from '../../utils/handleNotification';
+import { HandleNotification } from '../../utils/handleNotification';
 import auth from '@react-native-firebase/auth';
 
-const TaskDetail = ({navigation, route}: any) => {
-  const {id, color}: {id: string; color?: string} = route.params;
+const TaskDetail = ({ navigation, route }: any) => {
+  const { id, color }: { id: string; color?: string } = route.params;
   const [taskDetail, setTaskDetail] = useState<TaskModel>();
   const [progress, setProgress] = useState(0);
   const [attachments, setAttachments] = useState<Attachment[]>([]);
@@ -54,7 +54,7 @@ const TaskDetail = ({navigation, route}: any) => {
   useEffect(() => {
     if (taskDetail) {
       setProgress(taskDetail.progress ?? 0);
-      setAttachments(taskDetail.attachments);
+      setAttachments(taskDetail?.attachments || []);
       setIsUrgent(taskDetail.isUrgent);
     }
   }, [taskDetail]);
@@ -84,7 +84,9 @@ const TaskDetail = ({navigation, route}: any) => {
     firestore()
       .doc(`tasks/${id}`)
       .onSnapshot((snap: any) => {
+        console.log('getTaskDetail')
         if (snap.exists) {
+          console.log('nap: ', snap.data())
           setTaskDetail({
             id,
             ...snap.data(),
@@ -121,7 +123,7 @@ const TaskDetail = ({navigation, route}: any) => {
   };
 
   const handleUpdateTask = async () => {
-    const data = {...taskDetail, progress, attachments, updatedAt: Date.now()};
+    const data = { ...taskDetail, progress, attachments, updatedAt: Date.now() };
 
     await firestore()
       .doc(`tasks/${id}`)
@@ -136,7 +138,7 @@ const TaskDetail = ({navigation, route}: any) => {
     try {
       await firestore()
         .doc(`subTasks/${id}`)
-        .update({isCompleted: !isCompleted});
+        .update({ isCompleted: !isCompleted });
     } catch (error) {
       console.log(error);
     }
@@ -177,7 +179,7 @@ const TaskDetail = ({navigation, route}: any) => {
 
   return taskDetail ? (
     <>
-      <ScrollView style={{flex: 1, backgroundColor: colors.bgColor}}>
+      <ScrollView style={{ flex: 1, backgroundColor: colors.bgColor }}>
         <StatusBar hidden />
         <SectionComponent
           color={color ?? 'rgba(113, 77, 217, 0.9)'}
@@ -187,12 +189,12 @@ const TaskDetail = ({navigation, route}: any) => {
             borderBottomLeftRadius: 20,
             borderBottomRightRadius: 20,
           }}>
-          <RowComponent styles={{alignItems: 'center'}}>
+          <RowComponent styles={{ alignItems: 'center' }}>
             <TouchableOpacity onPress={() => navigation.goBack()}>
               <ArrowLeft2
                 size={28}
                 color={colors.white}
-                style={{marginTop: -8, marginRight: 12}}
+                style={{ marginTop: -8, marginRight: 12 }}
               />
             </TouchableOpacity>
             <TitleComponent
@@ -202,9 +204,9 @@ const TaskDetail = ({navigation, route}: any) => {
               size={22}
             />
           </RowComponent>
-          <View style={{marginTop: 20}}>
+          <View style={{ marginTop: 20 }}>
             <TextComponent text="Due date" />
-            <RowComponent styles={{justifyContent: 'space-between'}}>
+            <RowComponent styles={{ justifyContent: 'space-between' }}>
               <RowComponent
                 styles={{
                   flex: 1,
@@ -263,7 +265,7 @@ const TaskDetail = ({navigation, route}: any) => {
             }}>
             <TextComponent
               text={taskDetail.desctiption}
-              styles={{textAlign: 'justify'}}
+              styles={{ textAlign: 'justify' }}
             />
           </CardComponent>
         </SectionComponent>
@@ -334,7 +336,7 @@ const TaskDetail = ({navigation, route}: any) => {
           </RowComponent>
           <SpaceComponent height={12} />
           <RowComponent>
-            <View style={{flex: 1}}>
+            <View style={{ flex: 1 }}>
               <Slider
                 disabled
                 value={progress}
@@ -346,7 +348,7 @@ const TaskDetail = ({navigation, route}: any) => {
                 }}
                 maximumTrackTintColor={colors.gray2}
                 minimumTrackTintColor={colors.success}
-                trackStyle={{height: 10, borderRadius: 100}}
+                trackStyle={{ height: 10, borderRadius: 100 }}
               />
             </View>
             <SpaceComponent width={20} />
@@ -370,7 +372,7 @@ const TaskDetail = ({navigation, route}: any) => {
             subTasks.map((item, index) => (
               <CardComponent
                 key={`subtask${index}`}
-                styles={{marginBottom: 12}}>
+                styles={{ marginBottom: 12 }}>
                 <RowComponent
                   onPress={() =>
                     handleUpdateSubTask(item.id, item.isCompleted)
@@ -380,7 +382,7 @@ const TaskDetail = ({navigation, route}: any) => {
                     color={colors.success}
                     size={22}
                   />
-                  <View style={{flex: 1, marginLeft: 12}}>
+                  <View style={{ flex: 1, marginLeft: 12 }}>
                     <TextComponent text={item.title} />
                     <TextComponent
                       size={12}
