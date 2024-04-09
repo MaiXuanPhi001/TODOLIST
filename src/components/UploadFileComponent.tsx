@@ -12,7 +12,7 @@ import { globalStyles } from '../styles/globalStyles';
 import TitleComponent from './TitleComponent';
 import SpaceComponent from './SpaceComponent';
 import { calcFileSize } from '../utils/calcFileSize';
-// import { Slider } from '@miblanchard/react-native-slider';
+import { Slider } from '@miblanchard/react-native-slider';
 import RowComponent from './RowComponent';
 import storage from '@react-native-firebase/storage';
 
@@ -131,7 +131,7 @@ const UploadFileComponent = (props: Props) => {
                         </View>
                         <RowComponent>
                             <View style={{ flex: 1, marginRight: 12 }}>
-                                {/* <Slider
+                                <Slider
                                     disabled
                                     value={progressUpload}
                                     renderThumbComponent={() => null}
@@ -141,7 +141,7 @@ const UploadFileComponent = (props: Props) => {
                                     }}
                                     minimumTrackTintColor={colors.success}
                                     maximumTrackTintColor={colors.desc}
-                                /> */}
+                                />
                             </View>
                             <TextComponent
                                 text={`${Math.floor(progressUpload * 100)}%`}
