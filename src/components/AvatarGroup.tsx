@@ -22,9 +22,9 @@ const AvatarGroup = (props: Props) => {
         }[]
     >([]);
 
-    // useEffect(() => {
-    //     getUserAvata();
-    // }, [uids]);
+    useEffect(() => {
+        getUserAvata();
+    }, [uids]);
 
     const getUserAvata = async () => {
         const items: any = [...usersName];
@@ -61,7 +61,7 @@ const AvatarGroup = (props: Props) => {
                     index < 3 && <AvatarComponent uid={item} index={index} key={item} />,
             )}
 
-            {/* {uids.length > 3 && (
+            {uids.length > 3 && (
                 <View
                     key={'total'}
                     style={[
@@ -83,7 +83,7 @@ const AvatarGroup = (props: Props) => {
                         text={`+${uids.length - 3 > 9 ? 9 : uids.length - 3}`}
                     />
                 </View>
-            )} */}
+            )}
         </RowComponent>
     );
 };

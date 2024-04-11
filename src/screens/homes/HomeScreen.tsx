@@ -80,8 +80,8 @@ const HomeScreen = ({ navigation }: any) => {
 
         firestore()
             .collection('tasks')
-            .orderBy('dueDate')
-            .limitToLast(3)
+            // .where('uids', 'array-contains', user?.uid)
+            .limit(3)
             .onSnapshot(snap => {
                 if (snap.empty) {
                     console.log(`tasks not found!`);

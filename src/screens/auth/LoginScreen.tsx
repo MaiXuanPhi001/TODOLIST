@@ -1,15 +1,17 @@
-import React, { useState } from 'react';
-import Container from '../../components/Container';
-import SectionComponent from '../../components/SectionComponent';
-import TitleComponent from '../../components/TitleComponent';
-import RowComponent from '../../components/RowComponent';
-import InputComponent from '../../components/InputComponent';
 import { Lock, Sms } from 'iconsax-react-native';
-import { colors } from '../../constants/colors';
+import React, { useState } from 'react';
 import { Text, View } from 'react-native';
 import ButtonComponent from '../../components/ButtonComponent';
+import Container from '../../components/Container';
+import InputComponent from '../../components/InputComponent';
+import SectionComponent from '../../components/SectionComponent';
+import TitleComponent from '../../components/TitleComponent';
+import { colors } from '../../constants/colors';
+import { fontFamilies } from '../../constants/fontFamilies';
+import SpaceComponent from '../../components/SpaceComponent';
 import { globalStyles } from '../../styles/globalStyles';
 import auth from '@react-native-firebase/auth';
+import TextComponent from '../../components/TextComponent';
 
 const LoginScreen = ({ navigation }: any) => {
     const [email, setEmail] = useState('');
@@ -17,70 +19,77 @@ const LoginScreen = ({ navigation }: any) => {
     const [isLoading, setIsLoading] = useState(false);
     const [errorText, setErrorText] = useState('');
 
-    const handleLogin = async () => {
+    const handleLoginWithEmail = async () => {
         if (!email || !password) {
-            setErrorText('Please enter your email and password!!!');
+            setErrorText('please enter your email and password');
         } else {
             setErrorText('');
             setIsLoading(true);
+
             await auth()
                 .signInWithEmailAndPassword(email, password)
                 .then(userCredential => {
                     const user = userCredential.user;
-
-                    if (user) {
-                        console.log(user);
-                        setIsLoading(false);
-                    }
-                })
-                .catch(error => {
-                    setErrorText(error.message);
+                    // console.log(user);
                     setIsLoading(false);
+                })
+                .catch((error: any) => {
+                    setIsLoading(false);
+                    setErrorText(error.message);
                 });
         }
     };
+
     return (
         <Container>
             <SectionComponent
                 styles={{
-                    flex: 1,
                     justifyContent: 'center',
+                    flex: 1,
                 }}>
-                <RowComponent styles={{ marginBottom: 16 }}>
-                    <TitleComponent text="LOGIN" size={32} flex={0} />
-                </RowComponent>
-                <InputComponent
-                    title="Email"
-                    value={email}
-                    onChange={val => setEmail(val)}
-                    placeholder="Email"
-                    prefix={<Sms size={22} color={colors.gray2} />}
-                    allowClear
-                />
-                <InputComponent
-                    title="Password"
-                    isPassword
-                    value={password}
-                    onChange={val => setPassword(val)}
-                    placeholder="Password"
-                    prefix={<Lock size={22} color={colors.gray2} />}
-                />
-                <ButtonComponent
-                    isLoading={isLoading}
+                <TitleComponent
                     text="Login"
-                    onPress={handleLogin}
+                    size={32}
+                    font={fontFamilies.bold}
+                    styles={{ textTransform: 'uppercase', flex: 0, textAlign: 'center' }}
                 />
 
-                <RowComponent styles={{ marginTop: 20 }}>
-                    <Text style={[globalStyles.text]}>
-                        You don't have an account?{' '}
-                        <Text
-                            style={{ color: 'coral' }}
-                            onPress={() => navigation.navigate('RegisterScreen')}>
-                            Create an account
-                        </Text>
+                <View style={{ marginVertical: 20 }}>
+                    <InputComponent
+                        value={email}
+                        onChange={val => setEmail(val)}
+                        prefix={<Sms size={20} color={colors.desc} />}
+                        placeholder="Email"
+                        title="Email"
+                        allowClear
+                    />
+                    <InputComponent
+                        value={password}
+                        onChange={val => setPassword(val)}
+                        prefix={<Lock size={20} color={colors.desc} />}
+                        placeholder="Password"
+                        title="Password"
+                        isPassword
+                    />
+
+                    {errorText && <TextComponent text={errorText} color="coral" />}
+                </View>
+
+                <ButtonComponent
+                    isLoading={isLoading}
+                    text="login"
+                    onPress={handleLoginWithEmail}
+                />
+
+                <SpaceComponent height={20} />
+                <Text style={[globalStyles.text, { textAlign: 'center' }]}>
+                    You don't have an account?{' '}
+                    <Text
+                        style={{ color: 'coral' }}
+                        onPress={() => navigation.navigate('SigninScreen')}>
+                        Create an account
                     </Text>
-                </RowComponent>
+                </Text>
             </SectionComponent>
         </Container>
     );
