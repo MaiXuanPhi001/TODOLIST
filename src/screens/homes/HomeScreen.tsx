@@ -32,7 +32,7 @@ import { add0ToNumber } from '../../utils/add0ToNumber';
 import { HandleDateTime } from '../../utils/handeDateTime';
 import { HandleNotification } from '../../utils/handleNotification';
 import { NotificationModel } from '../../models/NotificationModel';
-// import messaging from '@react-native-firebase/messaging';
+import messaging from '@react-native-firebase/messaging';
 
 const date = new Date();
 
@@ -52,19 +52,19 @@ const HomeScreen = ({ navigation }: any) => {
 
     useEffect(() => {
         getTasks();
-        // HandleNotification.checkNotificationPersion();
-        // messaging().onMessage(mess => {
-        //     handleGetUnReadNotifications();
-        // });
+        HandleNotification.checkNotificationPersion();
+        messaging().onMessage(mess => {
+            handleGetUnReadNotifications();
+        });
 
-        // messaging()
-        //     .getInitialNotification()
-        //     .then((mess: any) => {
-        //         const data = mess.data;
-        //         const taskid = data.taskId;
+        messaging()
+            .getInitialNotification()
+            .then((mess: any) => {
+                const data = mess.data;
+                const taskid = data.taskId;
 
-        //         linkTo(`/task-detail/${taskid}`);
-        //     });
+                linkTo(`/task-detail/${taskid}`);
+            });
     }, []);
 
     useEffect(() => {

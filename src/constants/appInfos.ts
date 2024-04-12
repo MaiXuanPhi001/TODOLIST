@@ -14,4 +14,4 @@ export const monthNames = [
 ];
 
 export const serverKey =
-    'AAAAR_BP-BY:APA91bGkOySAERdamXf5Fj8WEFSpnDGjQT9MaP-JPFDzN2qqheR9uXXFmqM9f1UJhGsArymejQCitj2KRTTCIeFHaBeosDKryBCbODVT0ILkhnvnNTBcgdP6Edn0lzyxRuKWTJ5zyEVa';
+    'AAAA_HcP2Yg:APA91bHOqGptQET9akbuGlUAPJLxnnSGz20Y0zohKfUUmxZaufxU0eDl-ozSJDeFOhGnMglATN8S-WWTGIg5vDVF8FVRuP1ckfOfxdq7t41WQ_d4bCwLOXRwM-JXnRzd3Tarm0M5wHlR';

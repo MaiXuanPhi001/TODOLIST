@@ -1,39 +1,39 @@
-// import AsyncStorage from '@react-native-async-storage/async-storage';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
-// import messaging from '@react-native-firebase/messaging';
+import messaging from '@react-native-firebase/messaging';
 import { serverKey } from '../constants/appInfos';
 
 const user = auth().currentUser;
 
 export class HandleNotification {
-    // static checkNotificationPersion = async () => {
-    //     const authStatus = await messaging().requestPermission();
+    static checkNotificationPersion = async () => {
+        const authStatus = await messaging().requestPermission();
 
-    //     if (
-    //         authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
-    //         authStatus === messaging.AuthorizationStatus.PROVISIONAL
-    //     ) {
-    //         this.getFcmToken();
-    //     }
-    // };
+        if (
+            authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
+            authStatus === messaging.AuthorizationStatus.PROVISIONAL
+        ) {
+            this.getFcmToken();
+        }
+    };
 
-    // static getFcmToken = async () => {
-    //     const fcmtoken = await AsyncStorage.getItem('fcmtoken');
+    static getFcmToken = async () => {
+        const fcmtoken = await AsyncStorage.getItem('fcmtoken');
 
-    //     // console.log(fcmtoken);
+        console.log("fcmtoken: ", fcmtoken);
 
-    //     if (!fcmtoken) {
-    //         // get fcm token
+        if (!fcmtoken) {
+            // get fcm token
 
-    //         const token = await messaging().getToken();
+            const token = await messaging().getToken();
 
-    //         if (token) {
-    //             await AsyncStorage.setItem('fcmtoken', token);
-    //             this.UpdateToken(token);
-    //         }
-    //     }
-    // };
+            if (token) {
+                await AsyncStorage.setItem('fcmtoken', token);
+                this.UpdateToken(token);
+            }
+        }
+    };
 
     static UpdateToken = async (token: string) => {
         await firestore()
